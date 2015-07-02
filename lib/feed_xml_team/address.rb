@@ -10,7 +10,12 @@ module FeedXmlTeam
       start_range = options[:start] || default_start_range
       end_range = options[:end] || default_end_range
 
-      fail 'Invalid method.' unless %w(feeds).include? method
+      default_format = 'json'
+
+      # not allowing format change for now
+      # format = options[:format] || default_format
+
+      fail 'Invalid method.' unless %w(feeds get_document).include? method
 
       if method == 'feeds'
         end_point = '/feeds?'
@@ -37,6 +42,16 @@ module FeedXmlTeam
 
         if options[:fixture_keys]
           path << "fixture-keys=#{options[:fixture_keys]}"
+        end
+
+        path << "format=#{default_format}"
+      else
+        end_point = '/sportsml/files/'
+
+        if options[:file_path]
+          path << options[:file_path]
+        else
+          fail 'Missing `file_path`'
         end
       end
 

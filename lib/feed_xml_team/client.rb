@@ -1,6 +1,5 @@
 module FeedXmlTeam
   require 'httparty'
-  require 'nokogiri'
 
   class Client
     def initialize(username, password)
@@ -17,6 +16,33 @@ module FeedXmlTeam
         basic_auth: @auth
       )
 
-      feed = Nokogiri::XML(response.body)
+      feed = JSON.parse response.body
+
+      documents = []
+      feed['data']['document-listing'].each do |item|
+        record = {}
+
+        record[:file_path] = item['file-path']
+        record[:fixture_key] = item['fixture-key']
+        record[:publisher_key] = item['publisher-key']
+        record[:original_modified_time] = item['original-modified-time']
+
+        documents << record
+      end
+
+      documents
     end
+
+    def get_document(options = {})
+      response = HTTParty.get(
+        FeedXmlTeam::Address.build(
+          'get_document',
+          options
+        ),
+        basic_auth: @auth
+      )
+
+      Nokogiri::XML(response.body)
+    end
+  end
 end
