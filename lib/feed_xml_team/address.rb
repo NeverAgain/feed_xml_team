@@ -12,6 +12,13 @@ module FeedXmlTeam
 
       default_format = 'json'
 
+      default_event_statuses = 'post-event'
+
+      event_statuses = options[:event_statuses] || default_event_statuses
+
+      default_fixture_keys = 'event-summary'
+
+      fixture_keys = options[:fixture_keys] || default_fixture_keys
       # not allowing format change for now
       # format = options[:format] || default_format
 
@@ -26,7 +33,7 @@ module FeedXmlTeam
         # Publisher identifier
         path << "publisher-keys=#{options[:publisher_keys]}"
 
-        fail 'Must specify `league_id` (league-keys) or `team_id` (team-keys).' if options[:league_id].nil? && options[:team_id].nil?
+        # fail 'Must specify `league_id` (league-keys) or `team_id` (team-keys).' if options[:league_id].nil? && options[:team_id].nil?
 
         # League identifier
         path << "league-keys=#{options[:league_keys]}" if options[:league_id]
@@ -34,16 +41,21 @@ module FeedXmlTeam
         # Team identifier
         path << "team-keys=#{options[:team_keys]}" if options[:team_id]
 
+        # start range of the time specification
         path << "start=#{start_range}"
 
-        unless end_range.nil?
-          path << "end=#{end_range}"
-        end
+        # end range of the time specification
+        path << "end=#{end_range}" unless end_range.nil?
 
-        if options[:fixture_keys]
-          path << "fixture-keys=#{options[:fixture_keys]}"
-        end
+        # type of data: roster, player movment etc
+        path << "fixture-keys=#{fixture_keys}"
 
+        # event status. only retrieving post-event for now as I don't have mid-event
+        # for testing
+        path << "event-statuses=#{event_statuses}"
+
+        # using json as default formatting since I'm too busy to write a parser for
+        # xml
         path << "format=#{default_format}"
       else
         end_point = '/sportsml/files/'
