@@ -8,26 +8,30 @@ module FeedXmlTeam
     end
 
     def content_finder(options = {})
-      response = HTTParty.get(
-        FeedXmlTeam::Address.build(
-          'feeds',
-          options
-        ),
-        basic_auth: @auth
-      )
+      begin
+        response = HTTParty.get(
+          FeedXmlTeam::Address.build(
+            'feeds',
+            options
+          ),
+          basic_auth: @auth
+        )
 
-      feed = JSON.parse response.body
+        feed = JSON.parse response.body
 
-      documents = []
-      feed['data']['document-listing'].each do |item|
-        record = {}
+        documents = []
+        feed['data']['document-listing'].each do |item|
+          record = {}
 
-        record[:file_path] = item['file-path']
-        record[:fixture_key] = item['fixture-key']
-        record[:publisher_key] = item['publisher-key']
-        record[:original_modified_time] = item['original-modified-time']
+          record[:file_path] = item['file-path']
+          record[:fixture_key] = item['fixture-key']
+          record[:publisher_key] = item['publisher-key']
+          record[:original_modified_time] = item['original-modified-time']
 
-        documents << record
+          documents << record
+        end
+      rescue => e
+        raise e
       end
 
       documents
