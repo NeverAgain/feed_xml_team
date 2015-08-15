@@ -12,9 +12,7 @@ module FeedXmlTeam
 
       default_format = 'json'
 
-      default_event_statuses = 'post-event'
-
-      event_statuses = options[:event_statuses] || default_event_statuses
+      event_statuses = options[:event_statuses]
 
       # default_fixture_keys = 'event-summary'
 
@@ -61,7 +59,7 @@ module FeedXmlTeam
 
         # event status. only retrieving post-event for now as I don't have mid-event
         # for testing
-        path << "event-statuses=#{event_statuses}"
+        path << "event-statuses=#{event_statuses}" if !event_statuses.blank?
 
         # using json as default formatting since I'm too busy to write a parser for
         # xml and others
