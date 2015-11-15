@@ -20,15 +20,28 @@ module FeedXmlTeam
         feed = JSON.parse response.body
 
         documents = []
-        feed['data']['document-listing'].each do |item|
-          record = {}
+        loop do
+          feed['data']['document-listing'].each do |item|
+            record = {}
 
-          record[:file_path] = item['file-path']
-          record[:fixture_key] = item['fixture-key']
-          record[:publisher_key] = item['publisher-key']
-          record[:original_modified_time] = item['original-modified-time']
+            record[:file_path] = item['file-path']
+            record[:fixture_key] = item['fixture-key']
+            record[:publisher_key] = item['publisher-key']
+            record[:original_modified_time] = item['original-modified-time']
 
-          documents << record
+            documents << record
+          end
+
+          if feed['metadata']['next'].blank?
+            break
+          else
+            next_url = feed['metadata']['next']
+
+            response = HTTParty.get next_url, basic_auth @auth
+
+            feed = JSON.parse response.body
+          end
+
         end
       rescue => e
         raise e
@@ -47,6 +60,11 @@ module FeedXmlTeam
       )
 
       Nokogiri::XML(response.body)
+    end
+
+    def xml_to_json(item)
+
+
     end
   end
 end
