@@ -37,7 +37,7 @@ module FeedXmlTeam
           else
             next_url = feed['metadata']['next']
 
-            response = HTTParty.get next_url, basic_auth @auth
+            response = HTTParty.get(next_url, basic_auth: @auth)
 
             feed = JSON.parse response.body
           end
