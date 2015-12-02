@@ -49,6 +49,9 @@ module FeedXmlTeam
         # start range of the time specification
         path << "start=#{start_range}"
 
+        # event_key
+        path << "event-keys=#{options[:event_keys]}" if options[:event_keys]
+
         # end range of the time specification
         path << "end=#{end_range}" unless end_range.nil?
 
